@@ -1,13 +1,194 @@
 package com.bartz.mymusicplayer;
 
+import android.content.Intent;
+import android.media.MediaPlayer;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+
+    ImageView imageView;
+
+    ImageButton previous;
+    ImageButton rewind;
+    ImageButton play;
+    ImageButton forward;
+    ImageButton next;
+
+    SeekBar timeElapsedBar;
+
+    TextView elapsedTimeTextView;
+    TextView remainingTimeTextView;
+
+    MediaPlayer mediaPlayer;
+
+    int totalTime;
+    int currentPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        imageView = findViewById(R.id.musicImage);
+
+        previous = findViewById(R.id.previous);
+        rewind = findViewById(R.id.rewind);
+        play = findViewById(R.id.play);
+        forward = findViewById(R.id.forward);
+        next = findViewById(R.id.next);
+
+        timeElapsedBar = findViewById(R.id.seekBar);
+
+        elapsedTimeTextView = findViewById(R.id.current_time);
+        remainingTimeTextView = findViewById(R.id.remaining_time);
+
+        //mediaPlayer.prepare();
+        mediaPlayer = MediaPlayer.create(this, R.raw.music);
+        mediaPlayer.seekTo(0);
+        totalTime = mediaPlayer.getDuration();
+
+        // position bar
+        timeElapsedBar.setMax(totalTime);
+        timeElapsedBar.setOnSeekBarChangeListener(
+                new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress,
+                                                  boolean fromUser) {
+                        // "if" to not iterating twice each time ( was lagging music)
+                        if(fromUser) {
+                            mediaPlayer.seekTo(progress);
+                        }
+
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+
+                    }
+
+                });
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (mediaPlayer != null){
+                    try{
+                        Message msg = new Message();
+                        msg.what = mediaPlayer.getCurrentPosition();
+                        handler.sendMessage(msg);
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        Log.e("Thread", e + " occurred");
+                    }
+                }
+            }
+        }).start();
+    }
+
+    private Handler handler = new Handler(new Handler.Callback() {
+
+        @Override public boolean handleMessage(Message msg) {
+            int currentPosition = msg.what; // Update bar
+            timeElapsedBar.setProgress(currentPosition); // Update Labels.
+
+            String elapsedTime = createTimeLabel(currentPosition);
+            elapsedTimeTextView.setText(elapsedTime);
+            String remainingTime = "- " + createTimeLabel(totalTime - currentPosition);
+            remainingTimeTextView.setText(remainingTime);
+            return true; } });
+
+    public String createTimeLabel(int time){
+        String label = "";
+        int min = time / 1000 / 60;
+        int sec = time / 1000 % 60;
+
+        label = min + ":";
+        if (sec < 10) label += "0";
+        label += sec;
+
+        return label;
+    }
+
+    public void clickPlay(View view) {
+            if (!mediaPlayer.isPlaying()) {
+                mediaPlayer.start();
+                play.setImageResource(R.drawable.pause);
+        } else {
+                // song is playing
+                mediaPlayer.pause();
+                play.setImageResource(R.drawable.play_button);
+            }
+
+    }
+
+    public void clickForward(View view){
+        int forwardTime = 10;
+        if (mediaPlayer != null){
+            currentPosition = timeElapsedBar.getProgress() + forwardTime * 1000;
+            mediaPlayer.seekTo(currentPosition);
+            timeElapsedBar.setProgress(currentPosition);
+        }
+    }
+
+    public void clickRewind(View view){
+        int rewindTime = 10;
+        if (mediaPlayer != null){
+            currentPosition = timeElapsedBar.getProgress() - rewindTime * 1000;
+            mediaPlayer.seekTo(currentPosition);
+            timeElapsedBar.setProgress(currentPosition);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+//            case R.id.action_settings:
+//                NavUtils.navigateUpFromSameTask(this);
+//                return true;
+            case R.id.action_list_view:
+                Intent listView = new Intent(this, ListActivity.class);
+                startActivity(listView);
+                return true;
+//            case R.id.action_about:
+//                startActivity(new Intent(this, AboutActivity.class));
+//                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void clearMediaPlayer() {
+        mediaPlayer.stop();
+        mediaPlayer.release();
+        mediaPlayer = null;
     }
 }

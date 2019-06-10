@@ -1,18 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:layout_height="match_parent">
 
-    <TextView
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/appbar_padding_top"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_weight="1"
+            android:background="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:title="@string/app_name">
+
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_centerInParent="true">
 
-</android.support.constraint.ConstraintLayout>
+        <ImageView
+            android:id="@+id/musicImage"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/music_placeholder"
+            android:layout_marginBottom="10dp"/>
+
+        <RelativeLayout
+            android:id="@+id/duration"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/musicImage"
+            android:layout_centerInParent="true">
+
+            <TextView
+                android:id="@+id/current_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0:00" />
+
+            <TextView
+                android:id="@+id/remaining_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="-2:50" />
+
+        </RelativeLayout>
+
+        <android.support.v7.widget.AppCompatSeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:layout_below="@id/duration"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="20dp" />
+
+        <LinearLayout
+            android:id="@+id/buttons"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/seekBar"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/previous"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:src="@drawable/previous" />
+
+            <ImageButton
+                android:id="@+id/rewind"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:src="@drawable/rewind"
+                android:onClick="clickRewind"/>
+
+            <ImageButton
+                android:id="@+id/play"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_weight="2"
+                android:src="@drawable/play_button"
+                android:onClick="clickPlay"/>
+
+            <ImageButton
+                android:id="@+id/forward"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:src="@drawable/forward"
+                android:onClick="clickForward"/>
+
+            <ImageButton
+                android:id="@+id/next"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:src="@drawable/next" />
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>
