@@ -32,16 +32,23 @@ public class ListActivity extends AppCompatActivity {
     //private ArrayList<DataModel> data;
     public static View.OnClickListener myOnClickListener;
     private Context context;
-    private ArrayList<String> audioList;
+    private ArrayList<DataModel> audioList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+        }
+        int result = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (result == 0) {
+            Data data = new Data(this);
+            audioList = data.getAudioList();
+        }else
+            System.exit(0);
 
-        //get data
-        //data = DataDownload.getMyData();
 
         recyclerView = findViewById(R.id.list_recycler_view);
         //myOnClickListener = new MyOnClickListener(this, recyclerView);
@@ -53,99 +60,101 @@ public class ListActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        adapter = new ListAdapter(this, audioList);
+        recyclerView.setAdapter(adapter);
 
-        if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-        }
-        int result = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
-        if (result == 0) {
-            audioList = scanDeviceForMp3Files();
-            if(audioList.size() > 0) {
-                System.out.println("audiolista" + audioList.size());
-                System.out.println("audiolista" + audioList.toString());
-                adapter = new ListAdapter(this, audioList);
-                recyclerView.setAdapter(adapter);
-            }
-        }
+//        if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+//        }
+//        int result = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
+//        if (result == 0) {
+//            audioList = scanDeviceForMp3Files();
+//            if(audioList.size() > 0) {
+//                System.out.println("audiolista" + audioList.size());
+//                System.out.println("audiolista" + audioList.toString());
+//                adapter = new ListAdapter(this, audioList);
+//                recyclerView.setAdapter(adapter);
+//            }
+//        }
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //inflate the menu - adding items to actions bar
+        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
-    private ArrayList<String> scanDeviceForMp3Files() {
 
-        String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
-        String[] projection = {
-                MediaStore.Audio.Media.TITLE,
-                MediaStore.Audio.Media.ARTIST,
-                MediaStore.Audio.Media.DATA,
-                MediaStore.Audio.Media.DISPLAY_NAME,
-                MediaStore.Audio.Media.DURATION
-        };
-        final String sortOrder = MediaStore.Audio.AudioColumns.TITLE + " COLLATE LOCALIZED ASC";
-        ArrayList<String> mp3Files = new ArrayList<>();
+//    private ArrayList<String> scanDeviceForMp3Files() {
+//
+//        String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
+//        String[] projection = {
+//                MediaStore.Audio.Media.TITLE,
+//                MediaStore.Audio.Media.ARTIST,
+//                MediaStore.Audio.Media.DATA,
+//                MediaStore.Audio.Media.DISPLAY_NAME,
+//                MediaStore.Audio.Media.DURATION
+//        };
+//        final String sortOrder = MediaStore.Audio.AudioColumns.TITLE + " COLLATE LOCALIZED ASC";
+//        ArrayList<String> mp3Files = new ArrayList<>();
+//
+//        Cursor cursor = null;
+//        try {
+//            Uri uri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+//            cursor = getContentResolver().query(uri, projection, selection,
+//                    null, sortOrder);
+//            if (cursor != null) {
+//                cursor.moveToFirst();
+//
+//                while (!cursor.isAfterLast()) {
+//                    String title = cursor.getString(0);
+//                    String artist = cursor.getString(1);
+//                    String path = cursor.getString(2);
+//                    String displayName = cursor.getString(3);
+//                    String songDuration = cursor.getString(4);
+//                    cursor.moveToNext();
+//                    if (path != null && path.endsWith(".mp3")) {
+//                        mp3Files.add(path);
+//                    }
+//                }
+//
+//            }
+//
+//            // print to see list of mp3 files
+//            for (String file : mp3Files) {
+//                Log.i("TAG", file);
+//            }
+//
+//        } catch (Exception e) {
+//            Log.e("TAG", e.toString());
+//        } finally {
+//            if (cursor != null) {
+//                cursor.close();
+//            }
+//        }
+//        return mp3Files;
 
-        Cursor cursor = null;
-        try {
-            Uri uri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-            cursor = getContentResolver().query(uri, projection, selection,
-                    null, sortOrder);
-            if (cursor != null) {
-                cursor.moveToFirst();
-
-                while (!cursor.isAfterLast()) {
-                    String title = cursor.getString(0);
-                    String artist = cursor.getString(1);
-                    String path = cursor.getString(2);
-                    String displayName = cursor.getString(3);
-                    String songDuration = cursor.getString(4);
-                    cursor.moveToNext();
-                    if (path != null && path.endsWith(".mp3")) {
-                        mp3Files.add(path);
-                    }
-                }
-
-            }
-
-            // print to see list of mp3 files
-            for (String file : mp3Files) {
-                Log.i("TAG", file);
-            }
-
-        } catch (Exception e) {
-            Log.e("TAG", e.toString());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-        return mp3Files;
-
-//    //check if item bar was selected
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item){
-//        //handle press on action button
-//        switch (item.getItemId()) {
+    //check if item bar was selected
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        //handle press on action button
+        switch (item.getItemId()) {
 //            case R.id.action_list_view:
 //                NavUtils.navigateUpFromSameTask(this);
 //                return true;
-//            case R.id.action_grid_view:
-//                Intent gridView = new Intent(this, GridActivity.class);
-//                startActivity(gridView);
-//                return true;
+            case R.id.action_list_view:
+                Intent gridView = new Intent(this, MainActivity.class);
+                startActivity(gridView);
+                return true;
 //            case R.id.action_about:
 //                startActivity(new Intent(this, AboutActivity.class));
 //                return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
-//
+        }
+        return super.onOptionsItemSelected(item);
     }
+//
     @Override
     protected void onStart() {
         super.onStart();

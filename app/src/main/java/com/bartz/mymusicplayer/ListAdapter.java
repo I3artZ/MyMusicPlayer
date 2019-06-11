@@ -18,9 +18,9 @@ import java.util.List;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> {
     private Context context;
-    private ArrayList<String> audioList;
+    private ArrayList<DataModel> audioList;
 
-    public ListAdapter(Context context, ArrayList<String> audioList){
+    public ListAdapter(Context context, ArrayList<DataModel> audioList){
         this.context = context;
         this.audioList = audioList;
     }
@@ -59,21 +59,19 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> 
         //set content to proper views
         TextView textViewTitle = holder.textViewTitle;
         TextView textViewAuthor = holder.textViewAuthor;
-        TextView textViewDatePublished = holder.textViewDuration;
-        ImageView imageViewPicture = holder.imageViewPicture;
+        TextView textViewDuration = holder.textViewDuration;
+        //ImageView imageViewPicture = holder.imageViewPicture;
 
-        //textViewTitle.setText(dataSet.get(listPosition));
-//        textViewAuthor.setText(dataSet.get(listPosition).getAuthor());
-//        textViewDatePublished.setText(dataSet.get(listPosition).getDateTaken());
-//        imageViewPicture.setImageBitmap(dataSet.get(listPosition).getImage());
+        textViewTitle.setText(audioList.get(listPosition).getTitle());
+        textViewAuthor.setText(audioList.get(listPosition).getAuthor());
+        textViewDuration.setText(audioList.get(listPosition).getDuration());
+        //imageViewPicture.setImageBitmap(audioList.get(listPosition).getImage());
     }
 
 
     @Override
     public int getItemCount() {
-        //return dataSet.size();
-        //System.out.println("audiolista"+audioList.size());
-        return 10;
+        return audioList.size();
     }
 
 }

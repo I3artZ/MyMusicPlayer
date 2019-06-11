@@ -1,9 +1,13 @@
 package com.bartz.mymusicplayer;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -12,17 +16,14 @@ import java.util.List;
 public class Data {
 
     Context mContext;
-    List<String> mp3Files;
+    ArrayList<DataModel> audioList;
 
     public Data(Context context){
         mContext = context;
+        audioList = scanDeviceForMp3Files();
+        }
 
-        mp3Files = scanDeviceForMp3Files();
-
-
-    }
-
-    private List<String> scanDeviceForMp3Files(){
+    private ArrayList<DataModel> scanDeviceForMp3Files(){
         String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
         String[] projection = {
                 MediaStore.Audio.Media.TITLE,
@@ -33,6 +34,7 @@ public class Data {
         };
         final String sortOrder = MediaStore.Audio.AudioColumns.TITLE + " COLLATE LOCALIZED ASC";
         List<String> mp3Files = new ArrayList<>();
+        ArrayList<DataModel> audioList = new ArrayList<>();
 
         Cursor cursor = null;
         try {
@@ -51,6 +53,16 @@ public class Data {
                     cursor.moveToNext();
                     if(path != null && path.endsWith(".mp3")) {
                         mp3Files.add(path);
+                        if (artist.equals("<unknown>")){
+                            try {
+                                String[] parts = title.split(" - ");
+                                artist = parts[0];
+                                title  = parts[1];
+                            } catch (IndexOutOfBoundsException e){
+
+                            }
+                        }
+                        audioList.add(new DataModel(title, artist, songDuration, displayName, path));
                     }
                 }
 
@@ -68,10 +80,10 @@ public class Data {
                 cursor.close();
             }
         }
-        return mp3Files;
+        return audioList;
     }
 
-    public List<String> getMp3Files() {
-        return mp3Files;
+    public ArrayList<DataModel> getAudioList() {
+        return audioList;
     }
 }

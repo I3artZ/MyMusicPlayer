@@ -1,10 +1,14 @@
 package com.bartz.mymusicplayer;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -17,6 +21,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,10 +43,15 @@ public class MainActivity extends AppCompatActivity {
 
     int totalTime;
     int currentPosition;
+    ArrayList<DataModel> audioList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Data data = new Data(this);
+        audioList = data.getAudioList();
+
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -113,23 +124,11 @@ public class MainActivity extends AppCompatActivity {
             int currentPosition = msg.what; // Update bar
             timeElapsedBar.setProgress(currentPosition); // Update Labels.
 
-            String elapsedTime = createTimeLabel(currentPosition);
+            String elapsedTime = DataModel.createTimeLabel(currentPosition);
             elapsedTimeTextView.setText(elapsedTime);
-            String remainingTime = "- " + createTimeLabel(totalTime - currentPosition);
+            String remainingTime = "- " + DataModel.createTimeLabel(totalTime - currentPosition);
             remainingTimeTextView.setText(remainingTime);
             return true; } });
-
-    public String createTimeLabel(int time){
-        String label = "";
-        int min = time / 1000 / 60;
-        int sec = time / 1000 % 60;
-
-        label = min + ":";
-        if (sec < 10) label += "0";
-        label += sec;
-
-        return label;
-    }
 
     public void clickPlay(View view) {
             if (!mediaPlayer.isPlaying()) {
