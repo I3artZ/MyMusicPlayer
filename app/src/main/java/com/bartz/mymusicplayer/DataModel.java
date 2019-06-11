@@ -2,19 +2,25 @@ package com.bartz.mymusicplayer;
 
 import android.graphics.Bitmap;
 
-public class DataModel {
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
+public class DataModel implements Serializable {
+    int index;
     String title;
     String author;
-    String duration;
+    Integer duration;
     String displayName;
     Bitmap image;
     String path;
 
-    public DataModel(String title, String author, String duration, String displayName, String path) {
+    public DataModel(int index, String title, String author, String duration, String displayName, String path) {
+        this.index = index;
         this.title = title;
         this.author = author;
-        this.duration = duration;
+        this.duration = Integer.valueOf(duration);
         //this.image = image;
         this.displayName = displayName;
         this.path = path;
@@ -37,7 +43,11 @@ public class DataModel {
     }
 
     public String getDuration() {
-        return createTimeLabel(Integer.valueOf(duration));
+        return createTimeLabel(duration);
+    }
+
+    public Integer getIntDuration() {
+        return duration;
     }
 
     public String getDisplayName() {
@@ -55,6 +65,12 @@ public class DataModel {
 
         return label;
     }
+
+    public int getIndex() {
+        return index;
+    }
+
+//ArrayList<DataModel> employees = getUnsortedEmployeeList();
 
 }
 

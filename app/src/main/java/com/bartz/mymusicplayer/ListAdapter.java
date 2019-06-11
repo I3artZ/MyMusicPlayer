@@ -1,20 +1,14 @@
 package com.bartz.mymusicplayer;
 
-import android.content.ContentResolver;
+
 import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import java.util.ArrayList;
-import java.util.List;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> {
     private Context context;
@@ -57,15 +51,14 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int listPosition) {
         //set content to proper views
+
         TextView textViewTitle = holder.textViewTitle;
         TextView textViewAuthor = holder.textViewAuthor;
         TextView textViewDuration = holder.textViewDuration;
-        //ImageView imageViewPicture = holder.imageViewPicture;
 
         textViewTitle.setText(audioList.get(listPosition).getTitle());
         textViewAuthor.setText(audioList.get(listPosition).getAuthor());
         textViewDuration.setText(audioList.get(listPosition).getDuration());
-        //imageViewPicture.setImageBitmap(audioList.get(listPosition).getImage());
     }
 
 

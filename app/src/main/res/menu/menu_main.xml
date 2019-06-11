@@ -5,6 +5,6 @@
     <item
         android:id="@+id/action_list_view"
         android:title="list"
-        android:icon="@drawable/replay"
+        android:icon="@drawable/list"
         app:showAsAction="always"/>
 </menu>

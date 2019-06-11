@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -52,10 +53,18 @@ public class PlayerActivity extends AppCompatActivity {
 
         fa = this;
 
-        index = getIntent().getIntExtra("index", 0);
-
-        Data data = new Data(this);
-        audioList = data.getAudioList();
+        Intent intent = this.getIntent();
+        Bundle bundle = intent.getExtras();
+        try{
+            audioList = (ArrayList<DataModel>) bundle.getSerializable("audioList");
+            index = bundle.getInt("index");
+        } catch (NullPointerException e){
+            if (audioList == null) {
+                Data data = new Data(this);
+                audioList = data.getAudioList();
+                index = 0;
+            }
+        }
 
         setContentView(R.layout.activity_player);
 
@@ -174,16 +183,17 @@ public class PlayerActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-//            case R.id.action_settings:
-//                NavUtils.navigateUpFromSameTask(this);
-//                return true;
+
             case R.id.action_list_view:
                 Intent listView = new Intent(this, ListActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("audioList", audioList);
+                bundle.putInt("index", index);
+                bundle.putBoolean("isPlaying", mediaPlayer.isPlaying());
+                listView.putExtras(bundle);
                 startActivity(listView);
                 return true;
-//            case R.id.action_about:
-//                startActivity(new Intent(this, AboutActivity.class));
-//                return true;
+
         }
         return super.onOptionsItemSelected(item);
     }

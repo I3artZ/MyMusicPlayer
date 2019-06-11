@@ -1,15 +1,10 @@
 package com.bartz.mymusicplayer;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +53,7 @@ public class Data {
                             artist = parts[0];
                             title  = parts[1];
                         }
-                        audioList.add(n ,new DataModel(title, artist, songDuration, displayName, path));
+                        audioList.add(new DataModel(n, title, artist, songDuration, displayName, path));
                         n++;
                     }
                 }
