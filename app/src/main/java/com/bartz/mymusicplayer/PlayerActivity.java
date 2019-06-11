@@ -76,42 +76,8 @@ public class PlayerActivity extends AppCompatActivity {
         elapsedTimeTextView = findViewById(R.id.current_time);
         remainingTimeTextView = findViewById(R.id.remaining_time);
 
-
-
-        //mediaPlayer.prepare();
-        Uri song = Uri.parse(audioList.get(index).getPath());
-        mediaPlayer = MediaPlayer.create(this, song);
-        mediaPlayer.seekTo(0);
-        totalTime = mediaPlayer.getDuration();
-
-        displayName = audioList.get(index).getDisplayName();
-        displayNameTextView.setText(displayName);
-
-        // position bar
-        timeElapsedBar.setMax(totalTime);
-        timeElapsedBar.setOnSeekBarChangeListener(
-                new SeekBar.OnSeekBarChangeListener() {
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int progress,
-                                                  boolean fromUser) {
-                        // "if" to not iterating twice each time ( was lagging music)
-                        if(fromUser) {
-                            mediaPlayer.seekTo(progress);
-                        }
-
-                    }
-
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-
-                    }
-
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-
-                    }
-
-                });
+        //prepare song to playing
+        setSong();
 
         new Thread(new Runnable() {
             @Override
@@ -179,37 +145,7 @@ public class PlayerActivity extends AppCompatActivity {
             ++index;
         boolean wasPlaying = mediaPlayer.isPlaying();
         clearMediaPlayer();
-        //mediaPlayer.prepare();
-        Uri song = Uri.parse(audioList.get(index).getPath());
-        mediaPlayer = MediaPlayer.create(this, song);
-        mediaPlayer.seekTo(0);
-        totalTime = mediaPlayer.getDuration();
-
-        // position bar
-        timeElapsedBar.setMax(totalTime);
-        timeElapsedBar.setOnSeekBarChangeListener(
-                new SeekBar.OnSeekBarChangeListener() {
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int progress,
-                                                  boolean fromUser) {
-                        // "if" to not iterating twice each time ( was lagging music)
-                        if(fromUser) {
-                            mediaPlayer.seekTo(progress);
-                        }
-
-                    }
-
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-
-                    }
-
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-
-                    }
-
-                });
+        setSong();
         if (wasPlaying)
             clickPlay(view);
         }
@@ -221,38 +157,7 @@ public class PlayerActivity extends AppCompatActivity {
             --index;
         boolean wasPlaying = mediaPlayer.isPlaying();
         clearMediaPlayer();
-        //mediaPlayer.prepare();
-        Uri song = Uri.parse(audioList.get(index).getPath());
-        mediaPlayer = MediaPlayer.create(this, song);
-        mediaPlayer.seekTo(0);
-        totalTime = mediaPlayer.getDuration();
-
-        // position bar
-        timeElapsedBar.setMax(totalTime);
-        timeElapsedBar.setOnSeekBarChangeListener(
-                new SeekBar.OnSeekBarChangeListener() {
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int progress,
-                                                  boolean fromUser) {
-                        // "if" to not iterating twice each time ( was lagging music)
-                        if(fromUser) {
-                            mediaPlayer.seekTo(progress);
-                        }
-
-                    }
-
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-
-                    }
-
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-
-                    }
-
-                });
-
+        setSong();
         //start playing previous song if current one was playing
         if (wasPlaying)
             clickPlay(view);
@@ -291,6 +196,38 @@ public class PlayerActivity extends AppCompatActivity {
 
     private void setSong(){
 
+        // get song path and create mediaplayer
+        Uri song = Uri.parse(audioList.get(index).getPath());
+        mediaPlayer = MediaPlayer.create(this, song);
+
+        // set song to beginning
+        mediaPlayer.seekTo(0);
+
+        totalTime = mediaPlayer.getDuration();
+
+        // song display name (artist/title)
+        displayName = audioList.get(index).getDisplayName();
+        displayNameTextView.setText(displayName);
+
+        // position bar
+        timeElapsedBar.setMax(totalTime);
+        timeElapsedBar.setOnSeekBarChangeListener(
+                new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress,
+                                                  boolean fromUser) {
+                        // "if" to not iterate twice each time (music was lagging)
+                        if(fromUser) {
+                            mediaPlayer.seekTo(progress);
+                        }
+                    }
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {}
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {}
+
+                });
     }
 
     @Override
