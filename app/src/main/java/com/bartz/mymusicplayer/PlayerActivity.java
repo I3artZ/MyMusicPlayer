@@ -1,14 +1,11 @@
 package com.bartz.mymusicplayer;
 
-import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NavUtils;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -24,7 +21,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class PlayerActivity extends AppCompatActivity {
 
     ImageView imageView;
 
@@ -35,7 +32,9 @@ public class MainActivity extends AppCompatActivity {
     ImageButton next;
 
     SeekBar timeElapsedBar;
+    public static Activity fa;
 
+    TextView displayNameTextView;
     TextView elapsedTimeTextView;
     TextView remainingTimeTextView;
 
@@ -44,15 +43,21 @@ public class MainActivity extends AppCompatActivity {
     int totalTime;
     int currentPosition;
     ArrayList<DataModel> audioList;
+    int index;
+    String displayName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        fa = this;
+
+        index = getIntent().getIntExtra("index", 0);
+
         Data data = new Data(this);
         audioList = data.getAudioList();
 
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_player);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -67,13 +72,20 @@ public class MainActivity extends AppCompatActivity {
 
         timeElapsedBar = findViewById(R.id.seekBar);
 
+        displayNameTextView = findViewById(R.id.display_name);
         elapsedTimeTextView = findViewById(R.id.current_time);
         remainingTimeTextView = findViewById(R.id.remaining_time);
 
+
+
         //mediaPlayer.prepare();
-        mediaPlayer = MediaPlayer.create(this, R.raw.music);
+        Uri song = Uri.parse(audioList.get(index).getPath());
+        mediaPlayer = MediaPlayer.create(this, song);
         mediaPlayer.seekTo(0);
         totalTime = mediaPlayer.getDuration();
+
+        displayName = audioList.get(index).getDisplayName();
+        displayNameTextView.setText(displayName);
 
         // position bar
         timeElapsedBar.setMax(totalTime);
@@ -160,6 +172,92 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void clickNext(View view){
+        if (index == audioList.size()-1)
+            index = 0;
+        else
+            ++index;
+        boolean wasPlaying = mediaPlayer.isPlaying();
+        clearMediaPlayer();
+        //mediaPlayer.prepare();
+        Uri song = Uri.parse(audioList.get(index).getPath());
+        mediaPlayer = MediaPlayer.create(this, song);
+        mediaPlayer.seekTo(0);
+        totalTime = mediaPlayer.getDuration();
+
+        // position bar
+        timeElapsedBar.setMax(totalTime);
+        timeElapsedBar.setOnSeekBarChangeListener(
+                new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress,
+                                                  boolean fromUser) {
+                        // "if" to not iterating twice each time ( was lagging music)
+                        if(fromUser) {
+                            mediaPlayer.seekTo(progress);
+                        }
+
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+
+                    }
+
+                });
+        if (wasPlaying)
+            clickPlay(view);
+        }
+
+    public void clickPrevious(View view){
+        if (index == 0)
+            index = audioList.size()-1;
+        else
+            --index;
+        boolean wasPlaying = mediaPlayer.isPlaying();
+        clearMediaPlayer();
+        //mediaPlayer.prepare();
+        Uri song = Uri.parse(audioList.get(index).getPath());
+        mediaPlayer = MediaPlayer.create(this, song);
+        mediaPlayer.seekTo(0);
+        totalTime = mediaPlayer.getDuration();
+
+        // position bar
+        timeElapsedBar.setMax(totalTime);
+        timeElapsedBar.setOnSeekBarChangeListener(
+                new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress,
+                                                  boolean fromUser) {
+                        // "if" to not iterating twice each time ( was lagging music)
+                        if(fromUser) {
+                            mediaPlayer.seekTo(progress);
+                        }
+
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+
+                    }
+
+                });
+
+        //start playing previous song if current one was playing
+        if (wasPlaying)
+            clickPlay(view);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -190,4 +288,16 @@ public class MainActivity extends AppCompatActivity {
         mediaPlayer.release();
         mediaPlayer = null;
     }
+
+    private void setSong(){
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        clearMediaPlayer();
+    }
+
+
 }

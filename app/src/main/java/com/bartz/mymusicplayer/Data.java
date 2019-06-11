@@ -43,7 +43,7 @@ public class Data {
                     null, sortOrder);
             if( cursor != null){
                 cursor.moveToFirst();
-
+                int n = 0;
                 while( !cursor.isAfterLast() ){
                     String title = cursor.getString(0);
                     String artist = cursor.getString(1);
@@ -53,16 +53,13 @@ public class Data {
                     cursor.moveToNext();
                     if(path != null && path.endsWith(".mp3")) {
                         mp3Files.add(path);
-                        if (artist.equals("<unknown>")){
-                            try {
-                                String[] parts = title.split(" - ");
-                                artist = parts[0];
-                                title  = parts[1];
-                            } catch (IndexOutOfBoundsException e){
-
-                            }
+                        if (artist.equals("<unknown>") && title.contains(" - ")){
+                            String[] parts = title.split(" - ");
+                            artist = parts[0];
+                            title  = parts[1];
                         }
-                        audioList.add(new DataModel(title, artist, songDuration, displayName, path));
+                        audioList.add(n ,new DataModel(title, artist, songDuration, displayName, path));
+                        n++;
                     }
                 }
 

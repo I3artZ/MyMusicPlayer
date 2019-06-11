@@ -39,12 +39,21 @@
             android:layout_centerHorizontal="true"
             android:src="@drawable/music_placeholder"
             android:layout_marginBottom="10dp"/>
+        <TextView
+            android:id="@+id/display_name"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:layout_below="@id/musicImage"
+            android:gravity="center"
+            tools:text="@tools:sample/full_names"/>
 
         <RelativeLayout
             android:id="@+id/duration"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:layout_below="@id/musicImage"
+            android:layout_below="@id/display_name"
             android:layout_centerInParent="true">
 
             <TextView
@@ -83,7 +92,8 @@
                 android:layout_width="0dp"
                 android:layout_height="80dp"
                 android:layout_weight="1"
-                android:src="@drawable/previous" />
+                android:src="@drawable/previous"
+                android:onClick="clickPrevious"/>
 
             <ImageButton
                 android:id="@+id/rewind"
@@ -114,7 +124,8 @@
                 android:layout_width="0dp"
                 android:layout_height="80dp"
                 android:layout_weight="1"
-                android:src="@drawable/next" />
+                android:src="@drawable/next"
+                android:onClick="clickNext"/>
         </LinearLayout>
     </RelativeLayout>
 </RelativeLayout>
