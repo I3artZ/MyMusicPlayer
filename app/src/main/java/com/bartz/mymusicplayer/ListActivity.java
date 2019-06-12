@@ -1,6 +1,7 @@
 package com.bartz.mymusicplayer;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -30,10 +31,14 @@ public class ListActivity extends AppCompatActivity {
     private boolean isSortedByTime = false;
     private boolean isPlaying = false;
     int index = 0;
+    public static Activity la;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // to finish activity from another one
+        la = this;
+
         setContentView(R.layout.activity_list);
 
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {

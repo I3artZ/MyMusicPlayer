@@ -6,7 +6,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -33,7 +32,7 @@ public class PlayerActivity extends AppCompatActivity {
     ImageButton next;
 
     SeekBar timeElapsedBar;
-    public static Activity fa;
+    public static Activity pa;
 
     TextView displayNameTextView;
     TextView elapsedTimeTextView;
@@ -51,7 +50,7 @@ public class PlayerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        fa = this;
+        pa = this;
 
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
@@ -91,18 +90,24 @@ public class PlayerActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while (mediaPlayer != null){
-                    try{
+                while (mediaPlayer != null) {
+//                    try {
+//                        currentPosition = mediaPlayer.getCurrentPosition();
+//                        System.out.println(currentPosition +" current position");
+//                    } catch (IllegalStateException eState) {
+//                        System.out.println(eState + "current position2");
+//                        currentPosition = mediaPlayer.getCurrentPosition();
+//                        System.out.println(currentPosition +" current position2");
+//                    }
+                    try {
                         Message msg = new Message();
                         msg.what = mediaPlayer.getCurrentPosition();
                         handler.sendMessage(msg);
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
-                        Log.e("Thread", e + " occurred");
-                    }
+                    Log.e("Thread", e + " occurred");
                 }
-            }
-        }).start();
+        }}}).start();
     }
 
     private Handler handler = new Handler(new Handler.Callback() {
@@ -153,7 +158,7 @@ public class PlayerActivity extends AppCompatActivity {
         else
             ++index;
         boolean wasPlaying = mediaPlayer.isPlaying();
-        clearMediaPlayer();
+        mediaPlayer.reset();
         setSong();
         if (wasPlaying)
             clickPlay(view);
@@ -165,7 +170,7 @@ public class PlayerActivity extends AppCompatActivity {
         else
             --index;
         boolean wasPlaying = mediaPlayer.isPlaying();
-        clearMediaPlayer();
+        mediaPlayer.reset();
         setSong();
         //start playing previous song if current one was playing
         if (wasPlaying)
@@ -191,6 +196,9 @@ public class PlayerActivity extends AppCompatActivity {
                 bundle.putInt("index", index);
                 bundle.putBoolean("isPlaying", mediaPlayer.isPlaying());
                 listView.putExtras(bundle);
+                if (ListActivity.la != null) {
+                    ListActivity.la.finish();
+                }
                 startActivity(listView);
                 return true;
 

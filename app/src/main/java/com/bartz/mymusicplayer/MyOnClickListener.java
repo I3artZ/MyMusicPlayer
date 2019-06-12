@@ -30,8 +30,8 @@ public class MyOnClickListener implements View.OnClickListener {
         bundle.putSerializable("audioList", audioList);
         bundle.putInt("index", itemPosition);
         player.putExtras(bundle);
-        if (PlayerActivity.fa != null) {
-            PlayerActivity.fa.finish();
+        if (PlayerActivity.pa != null) {
+            PlayerActivity.pa.finish();
         }
         context.startActivity(player);
         //Toast.makeText(context, itemPosition+"", Toast.LENGTH_LONG).show();
