@@ -70,7 +70,5 @@ public class DataModel implements Serializable {
         return index;
     }
 
-//ArrayList<DataModel> employees = getUnsortedEmployeeList();
-
 }
 

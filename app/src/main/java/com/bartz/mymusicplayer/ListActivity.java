@@ -41,19 +41,23 @@ public class ListActivity extends AppCompatActivity {
         }
         int result = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
         if (result == 0) {
-            try{
+            try {
                 Intent intent = this.getIntent();
                 Bundle bundle = intent.getExtras();
                 audioList = (ArrayList<DataModel>) bundle.getSerializable("audioList");
                 index = bundle.getInt("index");
                 isPlaying = bundle.getBoolean("isPlaying");
+                if (audioList == null){
+                    Data data = new Data(this);
+                    audioList = data.getAudioList();
+                    index = 0;
+                }
             } catch (NullPointerException e) {
-                // starting app
                 Data data = new Data(this);
                 audioList = data.getAudioList();
+                index = 0;
             }
-        }else
-            System.exit(0);
+        } else System.exit(0);
 
 
         recyclerView = findViewById(R.id.list_recycler_view);
